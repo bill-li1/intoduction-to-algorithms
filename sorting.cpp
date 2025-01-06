@@ -59,7 +59,8 @@ void selection_sort(vector<int> &A, int n) {
   }
 }
 
-void merge(vector<int> &A, int left, int right, int middle) {
+void merge(vector<int> &A, int left, int right) {
+  int middle = left + (right - left) / 2;
   assert(left <= middle && middle <= right);
   vector<int> temp(right - left + 1); // temp array for merging
   int l = left;                       // index for left array
@@ -67,7 +68,6 @@ void merge(vector<int> &A, int left, int right, int middle) {
   int j = 0;                          // index for temp array
   while (l <= middle && r <= right) {
     if (A[l] < A[r]) {
-      print_array(A);
       temp[j] = A[l];
       l++;
     } else {
@@ -99,7 +99,7 @@ void merge_sort_helper(vector<int> &A, int left, int right) {
     int middle = left + (right - left) / 2;
     merge_sort_helper(A, left, middle);
     merge_sort_helper(A, middle + 1, right);
-    merge(A, left, right, middle);
+    merge(A, left, right);
   }
 }
 
@@ -109,11 +109,36 @@ void merge_sort(vector<int> &A, int n) {
   merge_sort_helper(A, 0, n - 1);
 }
 
+void heapify(vector<int> &A, int idx, int n) {
+  int largest = idx;
+  int left = 2 * idx + 1;
+  int right = 2 * idx + 2;
+  if (left < n && A[left] > A[largest])
+    largest = left;
+  if (right < n && A[right] > A[largest])
+    largest = right;
+  if (largest != idx) {
+    swap(A[largest], A[idx]);
+    heapify(A, largest, n);
+  }
+}
+
+void heap_sort(vector<int> &A, int n) {
+  for (int i = n / 2 - 1; i >= 0; i--) {
+    heapify(A, i, A.size());
+  }
+  for (int i = n - 1; i >= 0; i--) {
+    swap(A[i], A[0]);
+    heapify(A, 0, i);
+  }
+}
+
 int main() {
   vector<int> nums = {7, 3, 1, 4, 2, 6, 5};
   // insertion_sort(nums, nums.size());
   // selection_sort(nums, nums.size());
   // merge_sort(nums, nums.size());
   // bubble_sort(nums);
+  heap_sort(nums, nums.size());
   print_array(nums);
 }
